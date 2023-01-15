@@ -10,12 +10,8 @@ FROM $BASE_CONTAINER
 # Fix: https://github.com/koalaman/shellcheck/wiki/SC3014
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-# Install Tensorflow
-RUN conda install --quiet --yes -c pytorch -c nvidia \
-    pytorch \
-    torchvision \
-    torchaudio \
-    pytorch-cuda=11.7 && \
-    mamba clean --all -f -y && \
+# Install PyTorch via pip
+RUN pip install --no-cache-dir torch torchvision torchaudio && \
+    pip cache purge && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
