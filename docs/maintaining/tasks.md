@@ -9,12 +9,13 @@ To build new images and publish them to the Docker Hub registry, do the followin
 3. Monitor the merge commit GitHub Actions status.
 
    ```{note}
-   We think GitHub Actions are quite reliable, so please, investigate if some error occurs.
-   Building Docker images in PRs is exactly the same after merging to main, except there is an additional `push` step.
+   GitHub Actions are pretty reliable, so please investigate if some error occurs.
+   Building Docker images in PRs is the same as building them in default branch,
+   except single-platform images are pushed to Docker Hub and then tags are merged for `x86_64` and `aarch64`.
    ```
 
-4. Try to avoid merging another PR to main branch until all pending builds are complete.
-   This way, you will know which commit might have broken the build and also have correct tags for moving tags (like `python` version).
+4. Avoid merging another PR to the main branch until all pending builds are complete.
+   This way, you will know which commit might have broken the build and also have the correct tags for moving tags (like the `python` version).
 
 ## Updating Python version
 
@@ -22,14 +23,14 @@ When a new `Python` version is released, we wait for two things:
 
 - all the dependencies to be available (as wheels or in `conda-forge`).
 - the first `python` patch release for this version.
-  This allows to avoid many bugs, which can happen in a major release.
+  This allows us to avoid many bugs, which can happen in a major release.
 
 ## Updating the Ubuntu Base Image
 
 `docker-stacks-foundation` is based on the LTS Ubuntu docker image.
 We wait for the first point release of the new LTS Ubuntu before updating the version.
 Other images are directly or indirectly inherited from `docker-stacks-foundation`.
-We rebuild our images automatically each week, which means they frequently receive the updates.
+We rebuild our images automatically each week, which means they frequently receive updates.
 
 When there's a security fix in the Ubuntu base image, it's a good idea to manually trigger images rebuild [from the GitHub actions workflow UI](https://github.com/jupyter/docker-stacks/actions/workflows/docker.yml).
 Pushing the `Run Workflow` button will trigger this process.
@@ -40,29 +41,27 @@ Pushing the `Run Workflow` button will trigger this process.
 In general, we do not add new core images and ask contributors to either create a [recipe](../using/recipes.md) or [community stack](../contributing/stacks.md).
 ```
 
-When there's a new stack definition, do the following before merging the PR with the new stack:
+You can see an example of adding a new image [here](https://github.com/jupyter/docker-stacks/pull/1926/files).
 
-1. Ensure the PR includes an update to the stack overview diagram
+When there's a new stack definition, check before merging the PR:
+
+1. PR includes an update to the stack overview diagram
    [in the documentation](https://github.com/jupyter/docker-stacks/blob/main/docs/using/selecting.md#image-relationships).
    The image links to the [blockdiag source](http://interactive.blockdiag.com/) used to create it.
-2. Ensure the PR updates the [Makefile](https://github.com/jupyter/docker-stacks/blob/main/Makefile), which is used to build the stacks in order on GitHub Actions.
-3. Ensure necessary tags / manifests are added for the new image in the [tagging](https://github.com/jupyter/docker-stacks/tree/main/tagging) folder.
-4. Create a new repository in the `jupyter` org on Docker Hub named after the stack folder in the
-   git repo.
-5. Grant the `stacks` team permission to write to the repo.
+2. PR updates the [Makefile](https://github.com/jupyter/docker-stacks/blob/main/Makefile), which is used to build the stacks in order on GitHub Actions.
+3. Necessary tags/manifests are added for the new image in the [tagging](https://github.com/jupyter/docker-stacks/tree/main/tagging) folder.
+4. A new repository is created in the `jupyter` org on Docker Hub,
+   and it's named after the stack folder in the git repo.
+5. Grant the `stacks` team permission to write to this repo.
 
 ## Adding a New Maintainer Account
 
-1. Visit <https://hub.docker.com/app/jupyter/team/stacks/users>
+1. Visit <https://hub.docker.com/orgs/jupyter/teams/stacks/members>
 2. Add the maintainer's Docker Hub username.
 3. Visit <https://github.com/orgs/jupyter/teams/docker-image-maintainers/members>
 4. Add the maintainer's GitHub username.
 
-## Pushing a Build Manually
+## Restarting a failed build
 
-If automated build in GitHub Actions has got you down, do the following to push a build manually:
-
-1. Clone this repository.
-2. Check out the git SHA you want to build and publish.
-3. `docker login` with your Docker Hub credentials.
-4. Run `make push-all`.
+If an automated build in GitHub Actions has got you down, you can restart failed steps on GitHub.
+You can also download the artifacts and investigate them for any issues.

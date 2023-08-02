@@ -1,4 +1,4 @@
-name: Update dockerhub overviews
+name: Update Docker Hub overviews
 
 env:
   OWNER: ${{ github.repository_owner }}
@@ -14,6 +14,7 @@ on:
       - "base-notebook/README.md"
       - "datascience-notebook/README.md"
       - "docker-stacks-foundation/README.md"
+      - "julia-notebook/README.md"
       - "minimal-notebook/README.md"
       - "pyspark-notebook/README.md"
       - "r-notebook/README.md"
@@ -22,7 +23,7 @@ on:
 
 jobs:
   update-dockerhub-overview:
-    name: Update dockerhub overviews
+    name: Update Docker Hub overviews
     runs-on: ubuntu-latest
     if: github.repository == 'jupyter/docker-stacks'
 
@@ -30,7 +31,7 @@ jobs:
       - name: Checkout Repo ⚡️
         uses: actions/checkout@v3
 
-      - name: Push README to Dockerhub 🐳
+      - name: Push README to Docker Hub 🐳
         uses: christian-korneck/update-container-description-action@d36005551adeaba9698d8d67a296bd16fa91f8e8 # v1
         env:
           DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -54,6 +55,8 @@ jobs:
             description: "Scientific Jupyter Notebook Python Stack from https://github.com/jupyter/docker-stacks"
           - image: r-notebook
             description: "R Jupyter Notebook Stack from https://github.com/jupyter/docker-stacks"
+          - image: julia-notebook
+            description: "Julia Jupyter Notebook Stack from https://github.com/jupyter/docker-stacks"
           - image: tensorflow-notebook
             description: "Scientific Jupyter Notebook Python Stack w/ TensorFlow from https://github.com/jupyter/docker-stacks"
           - image: datascience-notebook

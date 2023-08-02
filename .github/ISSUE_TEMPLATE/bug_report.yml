@@ -10,7 +10,7 @@ body:
         Hi! Thanks for using the Jupyter Docker Stacks and taking some time to contribute to this project.
 
         We'd appreciate it if you could check out the [Troubleshooting common problems](https://jupyter-docker-stacks.readthedocs.io/en/latest/using/troubleshooting.html) section in the documentation,
-        as well as [existing issues](https://github.com/jupyter/docker-stacks/issues) prior to submitting an issue to avoid duplication.
+        as well as [existing issues](https://github.com/jupyter/docker-stacks/issues?q=is%3Aissue) prior to submitting an issue to avoid duplication.
 
         Please answer the following sections to help us troubleshoot the problem.
 
@@ -23,6 +23,8 @@ body:
         - all-spark-notebook
         - base-notebook
         - datascience-notebook
+        - docker-stacks-foundation
+        - julia-notebook
         - minimal-notebook
         - pyspark-notebook
         - r-notebook
@@ -95,7 +97,7 @@ body:
       description: |
         A clear and concise description of what the bug is.
       placeholder: |
-        Example: No output is visible in the notebook and the notebook server log contains messages about ...
+        Example: No output is visible in the notebook and the Server log contains messages about ...
     validations:
       required: true
 
@@ -112,7 +114,7 @@ body:
   - type: checkboxes
     attributes:
       label: Latest Docker version
-      description: You should try to use latest Docker version
+      description: You should try to use the latest Docker version
       options:
-        - label: I've updated my Docker version to the latest available and the issue still persists
+        - label: I've updated my Docker version to the latest available, and the issue still persists
           required: true

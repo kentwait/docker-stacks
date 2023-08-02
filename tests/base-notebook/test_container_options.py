@@ -12,11 +12,10 @@ LOGGER = logging.getLogger(__name__)
 
 
 def test_cli_args(container: TrackedContainer, http_client: requests.Session) -> None:
-    """Container should respect notebook server command line args
-    (e.g., disabling token security)"""
+    """Image should respect command line args (e.g., disabling token security)"""
     host_port = find_free_port()
     running_container = container.run_detached(
-        command=["start-notebook.sh", "--NotebookApp.token=''"],
+        command=["start-notebook.sh", "--IdentityProvider.token=''"],
         ports={"8888/tcp": host_port},
     )
     resp = http_client.get(f"http://localhost:{host_port}")
@@ -59,7 +58,7 @@ def test_unsigned_ssl(
     container: TrackedContainer, http_client: requests.Session
 ) -> None:
     """Container should generate a self-signed SSL certificate
-    and notebook server should use it to enable HTTPS.
+    and Jupyter Server should use it to enable HTTPS.
     """
     host_port = find_free_port()
     running_container = container.run_detached(
@@ -75,6 +74,42 @@ def test_unsigned_ssl(
     resp.raise_for_status()
     assert "login_submit" in resp.text
     logs = running_container.logs().decode("utf-8")
+    assert "ERROR" not in logs
+    warnings = TrackedContainer.get_warnings(logs)
+    assert not warnings
+
+
+@pytest.mark.parametrize(
+    "env",
+    [
+        {},
+        {"JUPYTER_PORT": 1234, "DOCKER_STACKS_JUPYTER_CMD": "lab"},
+        {"JUPYTER_PORT": 2345, "DOCKER_STACKS_JUPYTER_CMD": "notebook"},
+        {"JUPYTER_PORT": 3456, "DOCKER_STACKS_JUPYTER_CMD": "server"},
+        {"JUPYTER_PORT": 4567, "DOCKER_STACKS_JUPYTER_CMD": "nbclassic"},
+        {"JUPYTER_PORT": 5678, "RESTARTABLE": "yes"},
+        {"JUPYTER_PORT": 6789},
+        {"JUPYTER_PORT": 7890, "DOCKER_STACKS_JUPYTER_CMD": "notebook"},
+    ],
+)
+def test_custom_internal_port(
+    container: TrackedContainer,
+    http_client: requests.Session,
+    env: dict[str, str],
+) -> None:
+    """Container should be accessible from the host
+    when using custom internal port"""
+    host_port = find_free_port()
+    internal_port = env.get("JUPYTER_PORT", 8888)
+    running_container = container.run_detached(
+        command=["start-notebook.sh", "--IdentityProvider.token=''"],
+        environment=env,
+        ports={internal_port: host_port},
+    )
+    resp = http_client.get(f"http://localhost:{host_port}")
+    resp.raise_for_status()
+    logs = running_container.logs().decode("utf-8")
+    LOGGER.debug(logs)
     assert "ERROR" not in logs
     warnings = TrackedContainer.get_warnings(logs)
     assert not warnings

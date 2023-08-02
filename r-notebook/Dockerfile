@@ -27,7 +27,7 @@ USER ${NB_UID}
 
 # R packages including IRKernel which gets installed globally.
 # r-e1071: dependency of the caret R package
-RUN mamba install --quiet --yes \
+RUN mamba install --yes \
     'r-base' \
     'r-caret' \
     'r-crayon' \
@@ -45,19 +45,9 @@ RUN mamba install --quiet --yes \
     'r-rodbc' \
     'r-rsqlite' \
     'r-shiny' \
+    'r-tidymodels' \
     'r-tidyverse' \
     'unixodbc' && \
     mamba clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
-
-# `r-tidymodels` is not easy to install under arm
-RUN set -x && \
-    arch=$(uname -m) && \
-    if [ "${arch}" == "x86_64" ]; then \
-        mamba install --quiet --yes \
-            'r-tidymodels' && \
-            mamba clean --all -f -y && \
-            fix-permissions "${CONDA_DIR}" && \
-            fix-permissions "/home/${NB_USER}"; \
-    fi;

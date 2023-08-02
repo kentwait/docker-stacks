@@ -14,28 +14,28 @@
 repos:
   # Autoupdate: Python code
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.1
+    rev: v3.10.1
     hooks:
       - id: pyupgrade
         args: [--py39-plus]
 
   # Automatically sort python imports
   - repo: https://github.com/pycqa/isort
-    rev: 5.11.4
+    rev: 5.12.0
     hooks:
       - id: isort
         args: [--profile, black]
 
   # Autoformat: Python code
   - repo: https://github.com/psf/black
-    rev: 22.12.0
+    rev: 23.7.0
     hooks:
       - id: black
         args: [--target-version=py39]
 
   # Check python code static typing
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.991
+    rev: v1.4.1
     hooks:
       - id: mypy
         args: [--config, ./mypy.ini]
@@ -52,7 +52,7 @@ repos:
 
   # Autoformat: YAML, JSON, Markdown, etc.
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.0.0-alpha.4
+    rev: v3.0.0
     hooks:
       - id: prettier
 
@@ -72,9 +72,19 @@ repos:
       - id: hadolint-docker
         entry: hadolint/hadolint:v2.12.1-beta hadolint
 
+  # Lint: Dockerfile
+  # We're linting .dockerfile files as well
+  - repo: https://github.com/hadolint/hadolint.git
+    rev: v2.12.1-beta
+    hooks:
+      - id: hadolint-docker
+        entry: hadolint/hadolint:v2.12.1-beta hadolint
+        types: [file]
+        files: \.dockerfile$
+
   # Lint: YAML
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.28.0
+    rev: v1.32.0
     hooks:
       - id: yamllint
         args: ["-d {extends: relaxed, rules: {line-length: disable}}", "-s"]
@@ -89,20 +99,20 @@ repos:
 
   # Lint: Shell scripts
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.9.0.2
+    rev: v0.9.0.5
     hooks:
       - id: shellcheck
         args: ["-x"]
 
   # Lint: Python
   - repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
+    rev: 6.1.0
     hooks:
       - id: flake8
 
   # Lint: Markdown
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.32.2
+    rev: v0.35.0
     hooks:
       - id: markdownlint
         args: ["--fix"]
@@ -116,7 +126,7 @@ repos:
   # nbQA provides tools from the Python ecosystem like
   # pyupgrade, isort, black, and flake8, adjusted for notebooks.
   - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.6.0
+    rev: 1.7.0
     hooks:
       - id: nbqa-pyupgrade
         args: [--py39-plus]
@@ -127,7 +137,7 @@ repos:
 
   # Run black on python code blocks in documentation files.
   - repo: https://github.com/asottile/blacken-docs
-    rev: v1.12.1
+    rev: 1.15.0
     hooks:
       - id: blacken-docs
         # --skip-errors is added to allow us to have python syntax highlighting even if

@@ -26,7 +26,7 @@ RUN apt-get update --yes && \
 USER ${NB_UID}
 
 # Install Python 3 packages
-RUN mamba install --quiet --yes \
+RUN mamba install --yes \
     'altair' \
     'beautifulsoup4' \
     'bokeh' \
@@ -39,8 +39,7 @@ RUN mamba install --quiet --yes \
     'h5py' \
     'ipympl'\
     'ipywidgets' \
-    # Temporary fix for: https://github.com/jupyter/docker-stacks/issues/1851
-    'jupyter_server>=2.0.0' \
+    'jupyterlab-git' \
     'matplotlib-base' \
     'numba' \
     'numexpr' \
@@ -65,7 +64,7 @@ RUN mamba install --quiet --yes \
 # Install facets which does not have a pip or conda package at the moment
 WORKDIR /tmp
 RUN git clone https://github.com/PAIR-code/facets.git && \
-    jupyter nbextension install facets/facets-dist/ --sys-prefix && \
+    jupyter nbclassic-extension install facets/facets-dist/ --sys-prefix && \
     rm -rf /tmp/facets && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"

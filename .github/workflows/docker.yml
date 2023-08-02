@@ -24,6 +24,7 @@ on:
       - "base-notebook/**"
       - "datascience-notebook/**"
       - "docker-stacks-foundation/**"
+      - "julia-notebook/**"
       - "minimal-notebook/**"
       - "pyspark-notebook/**"
       - "r-notebook/**"
@@ -51,6 +52,7 @@ on:
       - "base-notebook/**"
       - "datascience-notebook/**"
       - "docker-stacks-foundation/**"
+      - "julia-notebook/**"
       - "minimal-notebook/**"
       - "pyspark-notebook/**"
       - "r-notebook/**"
@@ -162,6 +164,34 @@ jobs:
       runsOn: ubuntu-latest
     needs: [x86_64-minimal]
 
+  aarch64-julia:
+    uses: ./.github/workflows/docker-build-test-upload.yml
+    with:
+      parentImage: minimal-notebook
+      image: julia-notebook
+      platform: aarch64
+      runsOn: ARM64
+    needs: [aarch64-minimal]
+    if: github.repository == 'jupyter/docker-stacks'
+
+  x86_64-julia:
+    uses: ./.github/workflows/docker-build-test-upload.yml
+    with:
+      parentImage: minimal-notebook
+      image: julia-notebook
+      platform: x86_64
+      runsOn: ubuntu-latest
+    needs: [x86_64-minimal]
+
+  aarch64-tensorflow:
+    uses: ./.github/workflows/docker-build-test-upload.yml
+    with:
+      parentImage: scipy-notebook
+      image: tensorflow-notebook
+      platform: aarch64
+      runsOn: ARM64
+    needs: [aarch64-scipy]
+
   x86_64-tensorflow:
     uses: ./.github/workflows/docker-build-test-upload.yml
     with:
@@ -245,6 +275,8 @@ jobs:
             minimal-notebook,
             scipy-notebook,
             r-notebook,
+            julia-notebook,
+            tensorflow-notebook,
             datascience-notebook,
             pyspark-notebook,
             all-spark-notebook,
@@ -256,6 +288,8 @@ jobs:
         aarch64-minimal,
         aarch64-scipy,
         aarch64-r,
+        aarch64-julia,
+        aarch64-tensorflow,
         aarch64-datascience,
         aarch64-pyspark,
         aarch64-all-spark,
@@ -279,6 +313,7 @@ jobs:
             minimal-notebook,
             scipy-notebook,
             r-notebook,
+            julia-notebook,
             tensorflow-notebook,
             datascience-notebook,
             pyspark-notebook,
@@ -291,6 +326,7 @@ jobs:
         x86_64-minimal,
         x86_64-scipy,
         x86_64-r,
+        x86_64-julia,
         x86_64-tensorflow,
         x86_64-datascience,
         x86_64-pyspark,
@@ -313,6 +349,7 @@ jobs:
             minimal-notebook,
             scipy-notebook,
             r-notebook,
+            julia-notebook,
             tensorflow-notebook,
             datascience-notebook,
             pyspark-notebook,
@@ -327,3 +364,8 @@ jobs:
     if: github.repository == 'jupyter/docker-stacks'
     permissions:
       contents: write
+
+  contributed-recipes:
+    uses: ./.github/workflows/contributed-recipes.yml
+    needs: [merge-tags]
+    if: github.repository == 'jupyter/docker-stacks' && (github.ref == 'refs/heads/main' || github.event_name == 'schedule')

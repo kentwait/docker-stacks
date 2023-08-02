@@ -1,6 +1,5 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-
 import logging
 import time
 from typing import Optional
@@ -46,7 +45,6 @@ def test_start_notebook(
     running_container = container.run_detached(
         tty=True,
         environment=env,
-        command=["start-notebook.sh"],
         ports={"8888/tcp": host_port},
     )
     # sleeping some time to let the server start
